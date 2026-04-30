@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AnalisaSaham.dav</title>
+
+<!-- FONT LUCU -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+
+<style>
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #0f172a;
+    color: white;
+    padding: 15px;
+}
+
+h1 {
+    text-align: center;
+    font-weight: 600;
+    color: #38bdf8;
+}
+
+.card {
+    background: #1e293b;
+    padding: 15px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+}
+
+label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.desc {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 5px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    border: none;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.btn-hitung {
+    background: #22c55e;
+    color: white;
+}
+
+.btn-reset {
+    background: #ef4444;
+    color: white;
+}
+
+.hasil {
+    text-align: center;
+}
+
+.status {
+    padding: 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.section {
+    margin-top: 15px;
+    text-align: left;
+}
+
+</style>
+
+</head>
+<body>
+
+<h1>📊 AnalisaSaham.dav</h1>
+
+<div class="card">
+
+<label>Harga Saham</label>
+<div class="desc">Harga saham saat ini di market</div>
+<input type="number" id="harga">
+
+<label>PBV (Price to Book Value)</label>
+<div class="desc">Rasio harga dibanding nilai buku perusahaan</div>
+<input type="number" id="pbv">
+
+<label>PER (Price Earnings Ratio)</label>
+<div class="desc">Rasio harga terhadap laba perusahaan</div>
+<input type="number" id="per">
+
+<label>BVPS</label>
+<div class="desc">Book Value per Share (nilai buku per lembar saham)</div>
+<input type="number" id="bvps">
+
+<label>EPS</label>
+<div class="desc">Earnings per Share (laba per saham)</div>
+<input type="number" id="eps">
+
+<label>ROE (%)</label>
+<div class="desc">Kemampuan menghasilkan laba dari modal</div>
+<input type="number" id="roe">
+
+<label>DER</label>
+<div class="desc">Debt to Equity Ratio (rasio utang)</div>
+<input type="number" id="der">
+
+<button class="btn-hitung" onclick="analisa()">Analisa</button>
+<button class="btn-reset" onclick="resetForm()">Reset</button>
+
+</div>
+
+<div id="hasil"></div>
+
+<script>
+
+function resetForm() {
+    document.querySelectorAll("input").forEach(i => i.value = "");
+    document.getElementById("hasil").innerHTML = "";
+}
+
+function analisa() {
+
+let harga = parseFloat(document.getElementById("harga").value);
+let pbv = parseFloat(document.getElementById("pbv").value);
+let per = parseFloat(document.getElementById("per").value);
+let bvps = parseFloat(document.getElementById("bvps").value);
+let eps = parseFloat(document.getElementById("eps").value);
+let roe = parseFloat(document.getElementById("roe").value);
+let der = parseFloat(document.getElementById("der").value);
+
+if (!harga || !pbv || !per || !bvps || !eps) {
+    alert("Isi data utama dulu!");
+    return;
+}
+
+// ================= PERHITUNGAN =================
+let fairPBV = pbv * bvps;
+let fairPER = per * eps;
+let fairFinal = (fairPBV + fairPER) / 2;
+
+let mos = ((fairFinal - harga) / fairFinal) * 100;
+
+// ================= STATUS =================
+let status = "";
+let warna = "";
+
+if (harga < fairFinal * 0.8) {
+    status = "UNDERVALUE 🔥";
+    warna = "#22c55e";
+} else if (harga > fairFinal * 1.1) {
+    status = "OVERVALUE ❌";
+    warna = "#ef4444";
+} else {
+    status = "FAIR VALUE ⚖️";
+    warna = "#eab308";
+}
+
+// ================= INDIKATOR =================
+function cekROE(roe){
+    if (!roe) return "-";
+    if (roe > 20) return "Sangat Bagus ⭐";
+    if (roe > 15) return "Bagus 👍";
+    if (roe > 10) return "Cukup";
+    return "Kurang ❌";
+}
+
+function cekDER(der){
+    if (!der) return "-";
+    if (der < 0.5) return "Sehat 👍";
+    if (der < 1) return "Aman";
+    return "Berisiko ❌";
+}
+
+function cekValuasi(harga, fair){
+    if (harga < fair * 0.8) return "Murah 🟢";
+    if (harga > fair * 1.1) return "Mahal 🔴";
+    return "Wajar 🟡";
+}
+
+// ================= REKOMENDASI =================
+let buyScalp = harga * 0.97;
+let sellScalp = harga * 1.03;
+
+let buySwing = harga < fairFinal ? harga : fairFinal * 0.9;
+let sellSwing = fairFinal;
+
+// ================= GAMBARAN =================
+let kesimpulan = "";
+let saran = "";
+
+if (status.includes("UNDER")) {
+    kesimpulan = "Saham bagus dan masih murah (ideal)";
+    saran = "Cicil beli / akumulasi bertahap";
+} else if (status.includes("OVER")) {
+    kesimpulan = "Harga sudah mahal";
+    saran = "Tunggu koreksi";
+} else {
+    kesimpulan = "Harga mendekati wajar";
+    saran = "Masuk bertahap";
+}
+
+// ================= OUTPUT =================
+document.getElementById("hasil").innerHTML = `
+
+<div class="card hasil">
+
+<h2 style="color:${warna}">${status}</h2>
+
+<p>Margin of Safety: <b>${mos.toFixed(2)}%</b></p>
+
+<div class="section">
+<h3>Estimasi Harga Wajar</h3>
+<h1>Rp ${fairFinal.toFixed(0)}</h1>
+<p>Harga sekarang: Rp ${harga}</p>
+</div>
+
+<div class="section">
+<h3>Indikator</h3>
+<p>Valuasi: ${cekValuasi(harga, fairFinal)}</p>
+<p>ROE: ${cekROE(roe)}</p>
+<p>DER: ${cekDER(der)}</p>
+</div>
+
+<div class="section">
+<h3>Rekomendasi</h3>
+
+<p><b>Scalping</b><br>
+Buy: Rp ${buyScalp.toFixed(0)}<br>
+Sell: Rp ${sellScalp.toFixed(0)}</p>
+
+<p><b>Swing</b><br>
+Buy: Rp ${buySwing.toFixed(0)}<br>
+Target: Rp ${sellSwing.toFixed(0)}</p>
+
+</div>
+
+<div class="section">
+<h3>💡 Gambaran</h3>
+<p>${kesimpulan}</p>
+
+<h3>⚠️ Saran</h3>
+<p>${saran}</p>
+</div>
+
+</div>
+`;
+}
+</script>
+
+</body>
+</html>
