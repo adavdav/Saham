@@ -1,5 +1,3 @@
-Don Forgot to Follow Tiktok @PixelNian
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -9,11 +7,36 @@ Don Forgot to Follow Tiktok @PixelNian
   <style>
     body {
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
       background: #f0f8ff;
       font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    .text-follow {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #333;
+      font-weight: bold;
+      animation: bounce 1.5s infinite;
+    }
+
+    /* animasi naik turun */
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    .text-follow span {
+      color: #00aaff;
+      text-shadow: 0 0 8px rgba(0, 170, 255, 0.6);
     }
 
     .btn-analisa {
@@ -39,7 +62,6 @@ Don Forgot to Follow Tiktok @PixelNian
       transform: scale(0.95);
     }
 
-    /* efek lucu (shine) */
     .btn-analisa::before {
       content: "";
       position: absolute;
@@ -59,7 +81,11 @@ Don Forgot to Follow Tiktok @PixelNian
 </head>
 <body>
 
-  <a href="https://adavdav.github.io/Saham/index.html" class="btn-analisa">
+  <div class="text-follow">
+    🔥 Dont Forget To Follow Tiktok <span>@pixelnian</span>
+  </div>
+
+  <a href="https://adavdav.github.io/Saham/saham.html" class="btn-analisa">
     🚀 Analisa Sekarang
   </a>
 
